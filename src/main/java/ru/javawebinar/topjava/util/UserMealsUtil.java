@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class UserMealsUtil {
@@ -22,11 +23,18 @@ public class UserMealsUtil {
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
         );
 
+        System.out.println("Filtered by cycles:");
         List<UserMealWithExcess> mealsFilteredByCycles = filteredByCycles(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
         mealsFilteredByCycles.forEach(System.out::println);
 
+
+        System.out.println("Filtered by streams:");
         List<UserMealWithExcess> mealsFilteredByStreams = filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
         mealsFilteredByStreams.forEach(System.out::println);
+
+        System.out.println("Filtered by streams - Optional 2:");
+        List<UserMealWithExcess> mealsFilteredByStreamsOptional2 = filteredByStreamsOptional2(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
+        mealsFilteredByStreamsOptional2.forEach(System.out::println);
     }
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
@@ -75,4 +83,29 @@ public class UserMealsUtil {
 
         return filteredUserMealsWithExcess;
     }
+
+    public static List<UserMealWithExcess> filteredByStreamsOptional2(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+
+        List<UserMealWithExcess> filteredUserMealsWithExcess = meals.stream()
+                .collect(Collectors.groupingBy(userMeal -> userMeal.getDateTime().toLocalDate()))
+                .values()
+                .stream()
+                .collect(Collectors.toMap(
+                        list -> list.stream().collect(Collectors.summingInt(UserMeal::getCalories)),
+                        Function.identity()
+                ))
+                .entrySet()
+                .stream()
+                .flatMap(e -> e.getValue()
+                        .stream()
+                        .filter(userMeal -> TimeUtil.isBetweenHalfOpen(userMeal.getDateTime().toLocalTime(), startTime, endTime))
+                        .map(userMeal -> {
+                            boolean isExcess = (e.getKey() > caloriesPerDay);
+                            return new UserMealWithExcess(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), isExcess);
+                        }))
+                .collect(Collectors.toList());
+
+        return filteredUserMealsWithExcess;
+    }
+
 }
