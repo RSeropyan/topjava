@@ -1,4 +1,6 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
@@ -8,11 +10,19 @@
         table {
             border-collapse: collapse;
         }
+
         table, th, td {
             border: 1px solid #ddd;
         }
+
         th, td {
             padding: 5px 15px;
+        }
+        .no-excess {
+            color: green;
+        }
+        .excess {
+            color: red;
         }
     </style>
 </head>
@@ -20,6 +30,7 @@
 <h3><a href="index.html">Home</a></h3>
 <hr>
 <h2>Meals</h2>
+<h3><a href="meals/add">Add meal</a></h3>
 <table>
     <tr>
         <th>Date</th>
@@ -27,13 +38,13 @@
         <th>Calories</th>
         <th colspan="2">Operations</th>
     </tr>
-    <c:forEach var="meal" items="${requestScope.meals}">
-        <tr>
-            <td>${meal.dateTime}</td>
+    <c:forEach var="meal" items="${requestScope.meals}" begin="0" varStatus="loop">
+        <tr class="${meal.excess == 'true' ? 'excess' : 'no-excess'}">
+            <td>${meal.dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
-            <td><a href="meals/add">Update</a></td>
-            <td><a href="meals/delete">Delete</a></td>
+            <td><a href="meals/update?index=${pageScope.loop.index}">Update</a></td>
+            <td><a href="meals/delete?index=${pageScope.loop.index}">Delete</a></td>
         </tr>
     </c:forEach>
 </table>
