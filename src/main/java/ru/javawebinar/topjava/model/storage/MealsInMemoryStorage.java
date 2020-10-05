@@ -1,4 +1,6 @@
-package ru.javawebinar.topjava.model;
+package ru.javawebinar.topjava.model.storage;
+
+import ru.javawebinar.topjava.model.entity.Meal;
 
 import java.time.LocalDateTime;
 import java.time.Month;
