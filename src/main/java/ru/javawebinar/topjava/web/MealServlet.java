@@ -1,7 +1,7 @@
 package ru.javawebinar.topjava.web;
 
-import ru.javawebinar.topjava.model.service.MealsService;
 import ru.javawebinar.topjava.model.dto.MealTo;
+import ru.javawebinar.topjava.model.service.MealsService;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-public class ListMealServlet extends HttpServlet {
+public class MealServlet extends HttpServlet {
 
 //    private static final Logger log = LoggerFactory.getLogger(UserServlet.class);
 
