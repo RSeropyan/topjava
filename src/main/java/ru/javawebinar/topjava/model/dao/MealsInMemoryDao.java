@@ -3,7 +3,7 @@ package ru.javawebinar.topjava.model.dao;
 import ru.javawebinar.topjava.model.entity.Meal;
 import ru.javawebinar.topjava.model.storage.MealsInMemoryStorage;
 
-import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 public class MealsInMemoryDao implements MealsDao{
 
@@ -16,8 +16,8 @@ public class MealsInMemoryDao implements MealsDao{
     }
 
     @Override
-    public List<Meal> findAll() {
-        return MealsInMemoryStorage.getInstance().findAll();
+    public ConcurrentMap<Integer, Meal> findAll() {
+        return MealsInMemoryStorage.getInstance().list();
     }
 
     @Override

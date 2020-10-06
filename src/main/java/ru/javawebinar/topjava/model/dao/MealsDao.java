@@ -2,11 +2,11 @@ package ru.javawebinar.topjava.model.dao;
 
 import ru.javawebinar.topjava.model.entity.Meal;
 
-import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 public interface MealsDao {
 
-    List<Meal> findAll();
+    ConcurrentMap<Integer, Meal> findAll();
 
     Meal findById(Integer id);
 
