@@ -6,7 +6,9 @@ import ru.javawebinar.topjava.model.dto.MealTo;
 import ru.javawebinar.topjava.model.entity.Meal;
 import ru.javawebinar.topjava.util.MealsUtil;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 public class MealsService {
 
@@ -22,8 +24,9 @@ public class MealsService {
 
     public List<MealTo> getAllMeals() {
         MealsDao mealsDao = MealsInMemoryDao.getInstance();
-        List<Meal> meals = mealsDao.findAll();
-        return MealsUtil.convertToDtoList(meals, CALORIES_DAILY_LIMIT);
+        ConcurrentMap<Integer, Meal> meals = mealsDao.findAll();
+        List<Meal> mealsList = new ArrayList<>(meals.values());
+        return MealsUtil.convertToDtoList(mealsList, CALORIES_DAILY_LIMIT);
 
     }
 

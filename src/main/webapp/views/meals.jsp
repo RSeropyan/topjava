@@ -38,13 +38,13 @@
         <th>Calories</th>
         <th colspan="2">Operations</th>
     </tr>
-    <c:forEach var="meal" items="${requestScope.meals}" begin="0" varStatus="loop">
+    <c:forEach var="meal" items="${requestScope.meals}">
         <tr class="${meal.excess == 'true' ? 'excess' : 'no-excess'}">
             <td>${meal.dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
-            <td><a href="meals/update?index=${pageScope.loop.index}">Update</a></td>
-            <td><a href="meals/delete?index=${pageScope.loop.index}">Delete</a></td>
+            <td><a href="meals/update?id=${pageScope.meal.id}">Update</a></td>
+            <td><a href="meals/delete?id=${meal.id}">Delete</a></td>
         </tr>
     </c:forEach>
 </table>

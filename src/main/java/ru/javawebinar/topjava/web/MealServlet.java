@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava.web;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.javawebinar.topjava.model.dto.MealTo;
 import ru.javawebinar.topjava.model.service.MealsService;
 
@@ -19,10 +21,16 @@ public class MealServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         List<MealTo> meals = MealsService.getInstance().getAllMeals();
+
         req.setAttribute("meals", meals);
 
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/meals.jsp");
         requestDispatcher.forward(req, resp);
 
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//        req.setCharacterEncoding("UTF-8");
     }
 }
