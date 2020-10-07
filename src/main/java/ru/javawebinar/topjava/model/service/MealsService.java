@@ -6,15 +6,19 @@ import ru.javawebinar.topjava.model.dto.MealTo;
 import ru.javawebinar.topjava.model.entity.Meal;
 import ru.javawebinar.topjava.util.MealsUtil;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
 
 public class MealsService {
 
     private static final MealsService service = new MealsService();
 
-    private MealsService() { }
+    private MealsDao dao = null;
+
+    private MealsService() {
+        dao = MealsInMemoryDao.getInstance();
+    }
 
     public static MealsService getInstance() {
         return service;
@@ -22,12 +26,20 @@ public class MealsService {
 
     private static final int CALORIES_DAILY_LIMIT = 2000;
 
-    public List<MealTo> getAllMeals() {
-        MealsDao mealsDao = MealsInMemoryDao.getInstance();
-        ConcurrentMap<Integer, Meal> meals = mealsDao.findAll();
-        List<Meal> mealsList = new ArrayList<>(meals.values());
+    public List<MealTo> findAll() {
+
+        List<Meal> mealsList = new ArrayList<>(dao.findAll().values());
         return MealsUtil.convertToDtoList(mealsList, CALORIES_DAILY_LIMIT);
 
+    }
+
+    public void removeById(Integer id) {
+        dao.removeById(id);
+    };
+
+    public void save(Integer id, LocalDateTime dateTime, String description, int calories) {
+        Meal meal = new Meal(id, dateTime, description, calories);
+        dao.save(meal);
     }
 
 }

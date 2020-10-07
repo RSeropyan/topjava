@@ -30,7 +30,7 @@
 <h3><a href="index.html">Home</a></h3>
 <hr>
 <h2>Meals</h2>
-<h3><a href="meals/add">Add meal</a></h3>
+<h3><a href="#">Add meal</a></h3>
 <table>
     <tr>
         <th>Date</th>
@@ -43,8 +43,8 @@
             <td>${meal.dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
-            <td><a href="meals/update?id=${pageScope.meal.id}">Update</a></td>
-            <td><a href="meals/delete?id=${meal.id}">Delete</a></td>
+            <td><a href="meals?action=update&id=${meal.id}">Update</a></td>
+            <td><a href="meals?action=delete&id=${meal.id}">Delete</a></td>
         </tr>
     </c:forEach>
 </table>

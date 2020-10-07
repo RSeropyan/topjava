@@ -31,16 +31,15 @@ public class MealsInMemoryStorage {
         return storage;
     }
 
-    public ConcurrentMap<Integer, Meal> list() {
+    public ConcurrentMap<Integer, Meal> getContainer() {
         return meals;
     }
 
-    public Meal add(Meal meal) {
+    public void add(Meal meal) {
 
         Integer availableKey = meals.lastKey() + 1;
         meal.setId(availableKey);
         meals.put(availableKey, meal);
-        return meal;
 
     }
 

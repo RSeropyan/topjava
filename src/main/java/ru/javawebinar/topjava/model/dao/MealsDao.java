@@ -10,9 +10,7 @@ public interface MealsDao {
 
     Meal findById(Integer id);
 
-    Integer save(Meal meal);
+    void save(Meal meal);
 
-    void removeAll();
-
-    void removeById();
+    public void removeById(Integer id);
 }

@@ -8,8 +8,11 @@ import java.util.concurrent.ConcurrentMap;
 public class MealsInMemoryDao implements MealsDao{
 
     private static final MealsInMemoryDao dao = new MealsInMemoryDao();
+    private MealsInMemoryStorage storage = null;
 
-    private MealsInMemoryDao() { }
+    private MealsInMemoryDao() {
+        storage = MealsInMemoryStorage.getInstance();
+    }
 
     public static MealsInMemoryDao getInstance() {
         return dao;
@@ -17,26 +20,29 @@ public class MealsInMemoryDao implements MealsDao{
 
     @Override
     public ConcurrentMap<Integer, Meal> findAll() {
-        return MealsInMemoryStorage.getInstance().list();
+        return storage.getContainer();
     }
 
     @Override
     public Meal findById(Integer id) {
-        return null;
+        return storage.getContainer().get(id);
     }
 
     @Override
-    public Integer save(Meal meal) {
-        return null;
+    public void save(Meal meal) {
+
+        Integer id = meal.getId();
+        if (id == null) {
+            storage.add(meal);
+        }
+        else {
+            storage.getContainer().replace(id, meal);
+        }
+
     }
 
     @Override
-    public void removeAll() {
-
-    }
-
-    @Override
-    public void removeById() {
-
+    public void removeById(Integer id) {
+        storage.getContainer().remove(id);
     }
 }
