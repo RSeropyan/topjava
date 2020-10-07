@@ -28,6 +28,14 @@ public class MealServlet extends HttpServlet {
             RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/meals.jsp");
             requestDispatcher.forward(req, resp);
         }
+        else if (action.equals("add")) {
+            RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/meal-add.jsp");
+            requestDispatcher.forward(req, resp);
+        }
+        else if (action.equals("update")) {
+            RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/meal-update.jsp");
+            requestDispatcher.forward(req, resp);
+        }
         else {
             doDelete(req, resp);
         }
@@ -50,6 +58,10 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        req.setCharacterEncoding("UTF-8");
+
+        req.setCharacterEncoding("UTF-8");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/meal-add.jsp");
+        requestDispatcher.forward(req, resp);
+
     }
 }
