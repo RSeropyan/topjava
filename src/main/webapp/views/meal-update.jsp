@@ -17,22 +17,23 @@
 <h2>Edit meal</h2>
 
 <form action="meals" method="post">
+    <input type="hidden" value="${requestScope.id}" name="id">
     <label for="datetime">
         <b>DateTime</b>
         <br>
-        <input type="datetime-local" name="datetime" id="datetime" required>
+        <input type="datetime-local" value="${requestScope.datetime}" name="datetime" id="datetime" required>
     </label>
     <br><br>
     <label for="description">
         <b>Description</b>
         <br>
-        <input type="text" name="description" id="description" required>
+        <input type="text" name="description" value="${requestScope.description}" id="description" required>
     </label>
     <br><br>
     <label for="calories">
         <b>Calories</b>
         <br>
-        <input type="number" name="calories" id="calories" min="0" required>
+        <input type="number" name="calories"  value="${requestScope.calories}" id="calories" min="0" required>
     </label>
     <br><br>
     <input type="submit" value="Save">

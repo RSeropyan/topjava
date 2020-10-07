@@ -33,6 +33,10 @@ public class MealsService {
 
     }
 
+    public Meal findById(Integer id) {
+        return dao.findById(id);
+    }
+
     public void removeById(Integer id) {
         dao.removeById(id);
     };
