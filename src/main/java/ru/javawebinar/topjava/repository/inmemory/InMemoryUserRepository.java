@@ -6,40 +6,69 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 public class InMemoryUserRepository implements UserRepository {
+
     private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepository.class);
+
+    private final Map<Integer, User> repository = new ConcurrentHashMap<>();
+    private final AtomicInteger counter = new AtomicInteger(0);
 
     @Override
     public boolean delete(int id) {
-        log.info("delete {}", id);
-        return true;
+        return repository.remove(id) != null;
     }
 
     @Override
     public User save(User user) {
-        log.info("save {}", user);
-        return user;
+
+        if (user.isNew()) {
+            user.setId(counter.incrementAndGet());
+            repository.put(counter.get(), user);
+            return user;
+        }
+
+        // User is not new -> UPDATE operation has been requested
+        Integer id = user.getId();
+        if (repository.containsKey(id)) {
+            repository.replace(id, user);
+            return repository.get(id);
+        } else {
+            return null;
+        }
+
     }
 
     @Override
     public User get(int id) {
-        log.info("get {}", id);
-        return null;
+        return repository.get(id);
     }
 
     @Override
     public List<User> getAll() {
-        log.info("getAll");
-        return Collections.emptyList();
+
+        List<User> meals = new ArrayList<>(repository.values());
+        meals.sort(new Comparator<User>() {
+            @Override
+            public int compare(User o1, User o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        return meals;
+
     }
 
     @Override
     public User getByEmail(String email) {
-        log.info("getByEmail {}", email);
-        return null;
+
+        Optional<User> user = repository.values().stream()
+                .filter(u -> u.getEmail().equals(email))
+                .findFirst();
+        return user.orElse(null);
+
     }
 }
