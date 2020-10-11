@@ -9,6 +9,7 @@ import ru.javawebinar.topjava.repository.UserRepository;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryUserRepository implements UserRepository {
@@ -27,18 +28,20 @@ public class InMemoryUserRepository implements UserRepository {
     public User save(User user) {
 
         if (user.isNew()) {
+            // Here we CREATE new entity
             user.setId(counter.incrementAndGet());
             repository.put(counter.get(), user);
             return user;
         }
-
-        // User is not new -> UPDATE operation has been requested
-        Integer id = user.getId();
-        if (repository.containsKey(id)) {
-            repository.replace(id, user);
-            return repository.get(id);
-        } else {
-            return null;
+        else {
+            // Here we UPDATE an existing entity
+            Integer id = user.getId();
+            if (repository.containsKey(id)) {
+                repository.replace(id, user);
+                return repository.get(id);
+            } else {
+                return null;
+            }
         }
 
     }
@@ -51,21 +54,18 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public List<User> getAll() {
 
-        List<User> meals = new ArrayList<>(repository.values());
-        meals.sort(new Comparator<User>() {
-            @Override
-            public int compare(User o1, User o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
-        return meals;
+        return repository.values()
+                .stream()
+                .sorted(Comparator.comparing(User::getName))
+                .collect(Collectors.toList());
 
     }
 
     @Override
     public User getByEmail(String email) {
 
-        Optional<User> user = repository.values().stream()
+        Optional<User> user = repository.values()
+                .stream()
                 .filter(u -> u.getEmail().equals(email))
                 .findFirst();
         return user.orElse(null);
