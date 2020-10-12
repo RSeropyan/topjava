@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.repository.inmemory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -18,42 +19,51 @@ public class InMemoryMealRepository implements MealRepository {
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.meals.forEach(meal -> this.save(meal, null));
+        MealsUtil.meals.forEach(this::save);
     }
 
     @Override
-    public Meal save(Meal meal, Integer userId) {
-        if (meal.isNew()) {
+    public Meal save(Meal meal) {
+
+        if (meal == null) {
+            return null;
+        }
+        else if (meal.isNew()) {
             // Here we CREATE new entity
             meal.setId(counter.incrementAndGet());
+            meal.setUserId(SecurityUtil.authUserId());
             repository.put(meal.getId(), meal);
             return meal;
         }
         else {
             // Here we UPDATE an existing entity
             Integer id = meal.getId();
-            if (repository.containsKey(id)) {
-                if (meal.getUserId().equals(userId)) {
-                    repository.replace(id, meal);
-                    return repository.get(id);
-                }
-                else {
-                    return null;
-                }
-            } else {
-                return null;
-            }
+            return repository.containsKey(id) ? updateExistingMeal(id, meal) : null;
         }
-        //  handle case: update, but not present in storage
-        //  return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+
+    }
+
+    private Meal updateExistingMeal(Integer id, Meal meal) {
+
+        // Meal comes from Controller layer without userId property
+        Meal mealWithUserId = repository.get(id);
+        if (mealWithUserId.getUserId().equals(SecurityUtil.authUserId())) {
+            meal.setUserId(SecurityUtil.authUserId());
+            repository.replace(id, meal);
+            return meal;
+        }
+        else {
+            return null;
+        }
+
     }
 
     @Override
-    public boolean delete(int id, Integer userId) {
+    public boolean delete(int id) {
 
         if (repository.containsKey(id)) {
             Meal meal = repository.get(id);
-            if (meal.getUserId().equals(userId)) {
+            if (meal.getUserId().equals(SecurityUtil.authUserId())) {
                 repository.remove(id);
                 return true;
             }
@@ -64,22 +74,22 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Meal get(int id, Integer userId) {
+    public Meal get(int id) {
 
         if (repository.containsKey(id)) {
             Meal meal = repository.get(id);
-            return meal.getUserId().equals(userId) ? meal : null;
+            return meal.getUserId().equals(SecurityUtil.authUserId()) ? meal : null;
         }
         return null;
 
     }
 
     @Override
-    public List<Meal> getAll(Integer userId) {
+    public List<Meal> getAll() {
 
         return repository.values()
                 .stream()
-                .filter(meal -> meal.getUserId().equals(userId))
+                .filter(meal -> meal.getUserId().equals(SecurityUtil.authUserId()))
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
 
