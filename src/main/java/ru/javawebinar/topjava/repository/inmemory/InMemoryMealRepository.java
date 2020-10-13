@@ -5,7 +5,6 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -19,51 +18,41 @@ public class InMemoryMealRepository implements MealRepository {
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.meals.forEach(this::save);
+        MealsUtil.meals.forEach(meal -> this.save(meal, SecurityUtil.authUserId()));
     }
 
     @Override
-    public Meal save(Meal meal) {
+    public Meal save(Meal meal, int userId) {
 
         if (meal == null) {
-            return null;
+            throw new IllegalArgumentException();
         }
         else if (meal.isNew()) {
-            // Here we CREATE new entity
+            // CREATE new entity operation has been requested
             meal.setId(counter.incrementAndGet());
-            meal.setUserId(SecurityUtil.authUserId());
+            meal.setUserId(userId);
             repository.put(meal.getId(), meal);
             return meal;
         }
         else {
-            // Here we UPDATE an existing entity
+            // UPDATE an existing entity operation has been requested
             Integer id = meal.getId();
-            return repository.containsKey(id) ? updateExistingMeal(id, meal) : null;
-        }
-
-    }
-
-    private Meal updateExistingMeal(Integer id, Meal meal) {
-
-        // Meal comes from Controller layer without userId property
-        Meal mealWithUserId = repository.get(id);
-        if (mealWithUserId.getUserId().equals(SecurityUtil.authUserId())) {
-            meal.setUserId(SecurityUtil.authUserId());
-            repository.replace(id, meal);
-            return meal;
-        }
-        else {
+            if (repository.containsKey(id) && repository.get(id).getUserId().equals(userId)) {
+                meal.setUserId(userId);
+                repository.replace(id, meal);
+                return meal;
+            }
             return null;
         }
 
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean delete(int id, int userId) {
 
         if (repository.containsKey(id)) {
             Meal meal = repository.get(id);
-            if (meal.getUserId().equals(SecurityUtil.authUserId())) {
+            if (meal.getUserId().equals(userId)) {
                 repository.remove(id);
                 return true;
             }
@@ -74,25 +63,26 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Meal get(int id) {
+    public Meal get(int id, int userId) {
 
-        if (repository.containsKey(id)) {
-            Meal meal = repository.get(id);
-            return meal.getUserId().equals(SecurityUtil.authUserId()) ? meal : null;
+        Meal meal = repository.get(id);
+        if (meal != null && meal.getUserId().equals(userId)) {
+            return meal;
         }
         return null;
 
     }
 
     @Override
-    public List<Meal> getAll() {
+    public List<Meal> getAll(int userId) {
 
         return repository.values()
                 .stream()
-                .filter(meal -> meal.getUserId().equals(SecurityUtil.authUserId()))
+                .filter(meal -> meal.getUserId().equals(userId))
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
 
     }
+
 }
 

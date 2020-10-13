@@ -6,7 +6,10 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -27,21 +30,23 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public User save(User user) {
 
-        if (user.isNew()) {
-            // Here we CREATE new entity
+        if (user == null) {
+            return null;
+        }
+        else if (user.isNew()) {
+            // CREATE new entity operation has been requested
             user.setId(counter.incrementAndGet());
             repository.put(counter.get(), user);
             return user;
         }
         else {
-            // Here we UPDATE an existing entity
+            // UPDATE an existing entity operation has been requested
             Integer id = user.getId();
             if (repository.containsKey(id)) {
                 repository.replace(id, user);
-                return repository.get(id);
-            } else {
-                return null;
+                return user;
             }
+            return null;
         }
 
     }
@@ -66,6 +71,9 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public User getByEmail(String email) {
 
+        if (email == null) {
+            return null;
+        }
         Optional<User> user = repository.values()
                 .stream()
                 .filter(u -> u.getEmail().equals(email))
