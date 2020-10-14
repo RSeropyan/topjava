@@ -2,13 +2,31 @@
 <head>
     <meta charset="UTF-8">
     <title>Java Enterprise (Topjava)</title>
+    <style>
+        select {
+            padding: 4px;
+            width: 120px;
+            border-radius: 4px;
+        }
+        input {
+            padding: 4px;
+            width: 60px;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
 <h3>Проект <a href="https://github.com/JavaWebinar/topjava" target="_blank">Java Enterprise (Topjava)</a></h3>
 <hr>
-<ul>
-    <li><a href="users">Users</a></li>
-    <li><a href="meals">Meals</a></li>
-</ul>
+
+<form action="meals" method="get">
+    <label for="user">Select your role:</label>
+    <select id="user" name="authUserId">
+        <option value="1" selected>1 - User</option>
+        <option value="2">2 - Admin</option>
+    </select>
+    <input type="submit" value="Log In">
+</form>
+
 </body>
 </html>

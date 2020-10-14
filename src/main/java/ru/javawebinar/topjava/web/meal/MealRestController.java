@@ -2,15 +2,18 @@ package ru.javawebinar.topjava.web.meal;
 
 import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.ValidationUtil;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.SecurityUtil;
-
-import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
+
+import java.util.List;
 
 @Controller
 public class MealRestController {
@@ -21,21 +24,26 @@ public class MealRestController {
         this.service = service;
     }
 
-    public Meal create(Meal meal) {
+    public Meal save(Meal meal) throws NotFoundException {
+        return service.save(meal, SecurityUtil.authUserId());
+    }
+
+    public Meal create(Meal meal) throws NotFoundException {
         checkNew(meal);
         return service.save(meal, SecurityUtil.authUserId());
     }
 
-    public void update(Meal meal, int id) {
+
+    public void update(Meal meal, int id) throws NotFoundException {
         assureIdConsistent(meal, id);
         service.save(meal, SecurityUtil.authUserId());
     }
 
-    public void deleteById(Integer id) {
+    public void deleteById(Integer id) throws NotFoundException {
         service.deleteById(id, SecurityUtil.authUserId());
     }
 
-    public Meal getById(Integer id) {
+    public Meal getById(Integer id) throws NotFoundException {
         return service.getById(id, SecurityUtil.authUserId());
     }
 

@@ -1,11 +1,9 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
-import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.util.Comparator;
 import java.util.List;
@@ -20,8 +18,9 @@ public class InMemoryMealRepository implements MealRepository {
     private final Map<Integer, Meal> repository = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
 
+    // As userIds have been hard-coded in MealsUtil, meal.getUserId() is used here for creating entities with the same ids
     {
-        MealsUtil.meals.forEach(meal -> this.save(meal, SecurityUtil.authUserId()));
+        MealsUtil.meals.forEach(meal -> this.save(meal, meal.getUserId()));
     }
 
     @Override

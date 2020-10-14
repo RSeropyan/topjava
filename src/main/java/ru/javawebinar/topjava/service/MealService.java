@@ -16,7 +16,7 @@ public class MealService {
         this.repository = repository;
     }
 
-    public Meal save(Meal meal, int userId) {
+    public Meal save(Meal meal, int userId) throws NotFoundException {
         Meal newMeal = repository.save(meal, userId);
         if (newMeal != null) {
             return newMeal;
@@ -26,16 +26,16 @@ public class MealService {
         }
     }
 
-    public void deleteById(int id, int userId) {
+    public void deleteById(int id, int userId) throws NotFoundException {
 
-        boolean idDeleted = repository.delete(id, userId);
-        if (!idDeleted) {
+        boolean isDeleted = repository.delete(id, userId);
+        if (!isDeleted) {
             throw new NotFoundException("Not found entity with id=" + id);
         }
 
     }
 
-    public Meal getById(int id, int userId) {
+    public Meal getById(int id, int userId) throws NotFoundException {
 
         Meal meal = repository.get(id, userId);
         if (meal != null) {
