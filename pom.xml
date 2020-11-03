@@ -182,7 +182,6 @@
                 </dependency>
             </dependencies>
         </profile>
-
         <profile>
             <id>postgres</id>
             <dependencies>
@@ -208,6 +207,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
         </profile>
+
     </profiles>
 
     <dependencyManagement>
