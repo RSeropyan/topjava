@@ -38,7 +38,7 @@ public class UserServiceTest {
     private CacheManager cacheManager;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         cacheManager.getCache("users").clear();
     }
 
