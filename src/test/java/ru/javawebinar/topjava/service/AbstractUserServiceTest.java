@@ -1,7 +1,11 @@
 package ru.javawebinar.topjava.service;
 
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataAccessException;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.UserTestData;
@@ -25,17 +29,17 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     private CacheManager cacheManager;
 
-    @Autowired
-    @Lazy
-    protected JpaUtil jpaUtil;
-
-    @Before
-    public void setUp() throws Exception {
-        cacheManager.getCache("users").clear();
-        if (isJpaBased()) {
-            jpaUtil.clear2ndLevelHibernateCache();
-        }
-    }
+//    @Autowired
+//    @Lazy
+//    protected JpaUtil jpaUtil;
+//
+//    @BeforeEach
+//    public void setUp() throws Exception {
+//        cacheManager.getCache("users").clear();
+//        if (isJpaBased()) {
+//            jpaUtil.clear2ndLevelHibernateCache();
+//        }
+//    }
 
     @Test
     void create() {
