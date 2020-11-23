@@ -10,7 +10,7 @@ public class StringToLocalDateConverter implements Converter<String, LocalDate> 
 
     @Override
     public LocalDate convert(@Nullable String date) {
-        return (date == null) ? null : LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
+        return (date == null || date.trim().isEmpty()) ? null : LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
 }

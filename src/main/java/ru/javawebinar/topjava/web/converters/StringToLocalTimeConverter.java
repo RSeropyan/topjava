@@ -10,7 +10,7 @@ public class StringToLocalTimeConverter implements Converter<String, LocalTime> 
 
     @Override
     public LocalTime convert(@Nullable String time) {
-        return (time == null) ? null : LocalTime.parse(time, DateTimeFormatter.ISO_LOCAL_TIME);
+        return (time == null || time.trim().isEmpty()) ? null : LocalTime.parse(time, DateTimeFormatter.ISO_LOCAL_TIME);
     }
 
 }
